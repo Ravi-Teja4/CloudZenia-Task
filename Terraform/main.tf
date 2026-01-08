@@ -1,3 +1,4 @@
+
 resource "aws_vpc" "cloudzenia_vpc" {
   cidr_block           = "10.0.0.0/16"
   enable_dns_support   = true
@@ -121,4 +122,84 @@ resource "aws_route_table_association" "cloudzenia_private_1_assoc" {
 resource "aws_route_table_association" "cloudzenia_private_2_assoc" {
   subnet_id      = aws_subnet.cloudzenia_private_2.id
   route_table_id = aws_route_table.cloudzenia_private_rt.id
+}
+
+resource "aws_security_group" "cloudzenia_sg" {
+  name   = "cloudzenia-sg"
+  vpc_id = aws_vpc.cloudzenia_vpc.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "cloudzenia-sg"
+  }
+}
+
+resource "aws_instance" "cloudzenia_public_ec2_1" {
+  ami                         = "ami-00f46ccd1cbfb363e"
+  instance_type               = "t2.micro"
+  subnet_id                   = aws_subnet.cloudzenia_public_1.id
+  key_name                    = "Ravi-Teja-Key"
+  vpc_security_group_ids      = [aws_security_group.cloudzenia_sg.id]
+  associate_public_ip_address = true
+
+  tags = {
+    Name = "cloudzenia-public-ec2-1"
+  }
+}
+
+resource "aws_instance" "cloudzenia_public_ec2_2" {
+  ami                         = "ami-00f46ccd1cbfb363e"
+  instance_type               = "t2.micro"
+  subnet_id                   = aws_subnet.cloudzenia_public_2.id
+  key_name                    = "Ravi-Teja-Key"
+  vpc_security_group_ids      = [aws_security_group.cloudzenia_sg.id]
+  associate_public_ip_address = true
+
+  tags = {
+    Name = "cloudzenia-public-ec2-2"
+  }
+}
+
+resource "aws_instance" "cloudzenia_private_ec2_1" {
+  ami                    = "ami-00f46ccd1cbfb363e"
+  instance_type          = "t2.micro"
+  subnet_id              = aws_subnet.cloudzenia_private_1.id
+  key_name               = "Ravi-Teja-Key"
+  vpc_security_group_ids = [aws_security_group.cloudzenia_sg.id]
+
+  tags = {
+    Name = "cloudzenia-private-ec2-1"
+  }
+}
+
+resource "aws_instance" "cloudzenia_private_ec2_2" {
+  ami                    = "ami-00f46ccd1cbfb363e"
+  instance_type          = "t2.micro"
+  subnet_id              = aws_subnet.cloudzenia_private_2.id
+  key_name               = "Ravi-Teja-Key"
+  vpc_security_group_ids = [aws_security_group.cloudzenia_sg.id]
+
+  tags = {
+    Name = "cloudzenia-private-ec2-2"
+  }
 }
