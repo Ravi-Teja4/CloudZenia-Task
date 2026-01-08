@@ -1,0 +1,22 @@
+{
+  "family": "wordpress-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::312846472889:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::312846472889:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "microservice",
+      "image": "IMAGE_URI",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "protocol": "tcp"
+        }
+      ]
+    }
+  ]
+}
